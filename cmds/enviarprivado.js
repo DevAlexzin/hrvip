@@ -8,6 +8,7 @@ export default {
   run: async ({ msg, sock }) => {
     console.log("========================================");
     console.log("🔍 [DEBUG] Comando 'enviarprivado' ejecutado.");
+    console.log("📍 [DEBUG] Chat actual:", msg.chat);
     console.log("========================================");
 
     try {
@@ -30,7 +31,9 @@ export default {
 \`.enviarprivado 51912345678 | https://link.com/archivo.exe | Aquí tienes el exe que pediste 🎁\`
 
 *💡 También puedes enviar a varios números a la vez:*
-\`.enviarprivado 51912345678,51987654321 | https://link.com/archivo.exe\``;
+\`.enviarprivado 51912345678,51987654321 | https://link.com/archivo.exe\`
+
+> ✅ Este comando funciona en grupos y también en el privado del bot.`;
 
         return msg.reply(instrucciones);
       }
@@ -51,8 +54,11 @@ export default {
         return msg.reply('❌ El link no es válido. Debe empezar con `http://` o `https://`');
       }
 
-      // 5. Procesamos los números (pueden ser varios separados por coma)
-      const numerosArray = numerosTexto.split(',').map(n => n.replace(/\D/g, '').trim()).filter(n => n.length >= 8);
+      // 5. Procesamos los números
+      const numerosArray = numerosTexto
+        .split(',')
+        .map(n => n.replace(/\D/g, '').trim())
+        .filter(n => n.length >= 8);
 
       if (numerosArray.length === 0) {
         return msg.reply('❌ No se detectaron números válidos.\n\n*Ejemplo:* `51912345678` o `51912345678,51987654321`');
@@ -69,7 +75,6 @@ export default {
         try {
           const jid = numero + '@s.whatsapp.net';
 
-          // Construimos el mensaje
           let mensajeFinal = '';
           
           if (mensajeOpcional) {
@@ -86,7 +91,7 @@ export default {
           resultados.push(`✅ ${numero}`);
           console.log(`✅ [ENVIAR] Enviado a ${numero}`);
 
-          // Pequeña pausa para evitar bloqueos
+          // Pausa anti-bloqueo
           await new Promise(res => setTimeout(res, 1500));
 
         } catch (err) {
